@@ -1,0 +1,16 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Location {
+  id        Int      @id @default(autoincrement())
+  lat       Float
+  lng       Float
+  accuracy  Float?
+  userAgent String?
+  createdAt DateTime @default(now())
+}
