@@ -90,7 +90,7 @@ export default function Page() {
 
         // 🔹 After success, redirect to Google search
         router.push(
-          "https://www.google.com/search?q=horrible+ghost+seen+near+me"
+          "https://www.google.com/search?q=horrible+accident+happened+near+me"
         );
       },
       (err) => {
@@ -136,47 +136,45 @@ export default function Page() {
         disabled={loading}
         className="px-4 py-2 border rounded hover:bg-gray-100"
       >
-        {loading ? "Getting location..." : "Refresh / Get Location"}
+        {loading
+          ? "Fetching current location for best result for you FROM GOOGLE..."
+          : "Refresh / Get Location"}
       </button>
 
       {/* If permission denied, show a strong prompt + incognito helper */}
       {permissionDenied && (
-        <div className="max-w-xl w-full border border-red-300 bg-red-50 text-red-700 text-sm rounded p-3 space-y-2">
+        <div className="max-w-xl w-full border border-red-300 bg-red-50 text-red-700 text-sm rounded p-3 space-y-2 ">
           <p className="font-semibold mb-1">
-            Location permission is required for best results
+            <span className="underline underline-offset-4">Location permission</span> is required for best results
           </p>
           <p>
-            You rejected location access. To get the most accurate and relevant
-            results from Google, please allow location access when the browser
-            asks again.
+            You rejected location access. To get the{" "}
+            <span className="bg-red-900 text-white px-1">
+              most accurate and relevant results from Google
+            </span>
+            , please allow location access when the browser asks again.
           </p>
-          
 
           {siteUrl && (
-            <div className="mt-2 text-xs">
+            <div className="mt-2 text-xs ">
               <p className="mb-1 font-semibold">Your site URL:</p>
               <p className="font-mono break-all bg-white text-red-800 px-2 py-1 rounded border border-red-200">
                 {siteUrl}
               </p>
-              <p className="mt-1">
-                First close all incognito / private tabs, if any. Then,{" "}
+              <p className="mt-5">
+                1-{" "}
+                <span className="bg-red-900 text-white px-1">
+                  First close all incognito / private tabs
+                </span>
+                , if any. Then, <br></br>
                 <br></br>
-                Open Incognito / Private tab in your browser, paste this URL
-                there, and then tap{" "}
+                2-{" "}
+                <span className="bg-red-900 text-white px-1">
+                  Open Incognito / Private tab
+                </span>{" "}
+                in your browser, paste this URL there, and then tap{" "}
                 <span className="font-semibold">“Refresh / Get Location”</span>{" "}
                 again.
-              </p>
-              <p className="mt-1">
-                Or{" "}
-                <a
-                  href={siteUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="underline text-blue-700"
-                >
-                  open this site in a new window
-                </a>{" "}
-                and then manually switch to Incognito if you want.
               </p>
             </div>
           )}
